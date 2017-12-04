@@ -4,16 +4,14 @@
 %%==================================================
 
 \begin{abstract}
-
-
+网络功能虚拟化（NFV）在云计算基础设施部署时表现出了业界的敏捷性和可扩展性，但软件化网络服务的性能仍然阻碍了其普及。云中的大多数网络服务在标准高容量服务器（SHVS）中作为服务功能链（SFC）运行，SHVS由虚拟机（VM）组成。每台虚拟机都在SFC中运行专用的虚拟网络功能（VNF。 hypervisor将这些虚拟机作为单个实例运行VNF来维护。当SFC被请求服务时，资源管理器缺少对正在运行的VF之间的连接的细节的识别，并且分开分配资源，从而导致SHVS的低效资源利用。为了解决这个问题，我们提出了一个新的资源抽象考虑链式NFV工作负载的基本特征。我们基于我们的模型设计了一个两阶段算法，叫做\ textbf {Furion}来调度资源分配。该算法在实际IP多媒体子系统（IMS）平台上进行了测试，并与现有的通用方法进行了比较，结果表现出明显的提升。
 
 \keywords{\large 上海交大 \quad 饮水思源 \quad 爱国荣校}
 \end{abstract}
 
 \begin{englishabstract}
+Network Function Virtualization (NFV) shows agility and scalability in industry when deployed in cloud computing infrastructure, but the performance of softwarized network service still impedes its popularization. Most of the network service in cloud run as service function chain (SFC) in Standard High Volume Server (SHVS), consisting of virtual machines (VMs) in tandem. Each VM runs a dedicated virtual network function (VNF) in SFC. The hyper-visor treats these VM with running VNF as single instance to maintain. When SFC is called for serving, the resource manager lacks the recognition of details on the connections among running VFs and separately allocate the resource which consequently lead to low efficient resource utilization for SHVS. To resolve this problem in this paper, we propose a new resource abstraction considering the chain-style NFV workload with underlying characteristics. We design a two-phase algorithm based on our model called \textbf{Furion} to schedule the resource allocation. The algorithm is tested in real IP Multimedia Subsystem (IMS) platform and compared to existing generic methods, and the result shows obvious enhancement.
 
-
-
-\englishkeywords{\large SJTU, master thesis, XeTeX/LaTeX template}
+\englishkeywords{NFV, SFC, Multi-core Server, NUMA, Mapping, Dynamic Benchmarking}
 \end{englishabstract}
 
