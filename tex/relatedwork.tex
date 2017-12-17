@@ -13,7 +13,7 @@ I / O虚拟化的设备仿真方法通常用于全虚拟化，如图1所示，�
 \begin{figure}[!htp]
 	\centering
 	\includegraphics[width=0.8\textwidth]{Device_Emulation.png}
-	\bicaption[fig:SRR]{设备模拟模式示意图}{中文题图}{Fig}{English caption}
+	\bicaption[fig:SRR]{设备模拟模式示意图}{设备模拟模式示意图}{Fig}{Device Emulation Model}
 \end{figure}
 但是，由于VMM需要动态翻译所有操作系统指令并缓存所有结果，所以设备仿真方法引发了弱故障隔离，因此VMM设备驱动程序的故障将导致所有guest虚拟机的I / O中断。 而且，由于在运行时对这些敏感和特权的指令请求进行代价高昂的陷阱和仿真，所以会导致性能方面的挑战。 据报道，每个典型的I / O操作陷阱和仿真都将导致客户操作系统和VMM之间的上下文切换，其成本约为3000〜5000个CPU周期[13]。 在实践中，它显着降低了我们实验的近10倍的I / O吞吐量。 这一挑战阻碍了将设备仿真方法部署到云计算中的高性能网络和配备现代NIC（例如40 Gbps NIC）的数据中心。
 
@@ -22,7 +22,7 @@ I / O虚拟化的设备仿真方法通常用于全虚拟化，如图1所示，�
 \begin{figure}[!htp]
 	\centering
 	\includegraphics[width=0.8\textwidth]{Split_driver.png}
-	\bicaption[fig:SRR]{Split-driver模式示意图}{中文题图}{Fig}{English caption}
+	\bicaption[fig:SRR]{Split-driver模式示意图}{Split-driver模式示意图}{Fig}{Split-driver Model}
 \end{figure}
 一旦vHost获得信号，它将获取有效队列的物理地址，并将数据复制到绑定点击设备。数据将通过网络堆栈传输到目的地。如果发现目标是同一台机器上的虚拟机，vHost将利用零拷贝机制，通过共享内存直接将数据复制到目标虚拟机的虚拟环境中。当收到数据时，回调信号将被触发，并让VM将传输的数据放入使用队列。总而言之，虚拟化中的数据流可以被看作是将数据从一个存储区复制到另一个存储区。拆分驱动程序模型采用高效的I / O通信通道（I / O通道），以减少模拟端口I / O和内存映射I / O功能的管理程序干预。因此，拆分驱动程序可以利用主机设备功能提供比设备仿真方法更多的吞吐量和更少的CPU利用率。即使PV需要对操作系统内核进行深度修改，拆分驱动程序模型也显示出其在监督和迁移方面的巨大灵活性，在现代管理程序和来宾域中得到支持
 
@@ -32,7 +32,7 @@ I / O虚拟化的设备仿真方法通常用于全虚拟化，如图1所示，�
 \begin{figure}[!htp]
 	\centering
 	\includegraphics[width=0.8\textwidth]{SR_IOV.jpg}
-	\bicaption[fig:SRR]{硬件辅助模式示意图}{中文题图}{Fig}{English caption}
+	\bicaption[fig:SRR]{硬件辅助模式示意图}{硬件辅助模式示意图}{Fig}{Hardware-assisted Model}
 \end{figure}
 SR-IOV虚拟化体系结构如图3所示，其中一个具有SR-IOV功能的设备可以由VMM配置成在多个虚拟功能（VF）中出现在PCI配置空间中。 具有SR-IOV功能的器件提供可配置数量的独立VF，每个VF具有用基地址寄存器（BAR）完成的自己的配置空间。 服务OS（主机OS）中的物理功能（PF）驱动程序负责管理和配置VF，每个VF驱动程序作为正常的设备驱动程序运行在客户OS上，通过IOMMU直接访问其专用的VF。 因此，SR-IOV可以绕过虚拟机管理程序，以减轻数据移动开销，降低CPU利用率，减少系统延迟并提高网络吞吐量。
 
