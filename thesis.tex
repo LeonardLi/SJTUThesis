@@ -6,7 +6,7 @@
 % 双面打印
 %\documentclass[doctor, fontset=adobe, openright, twoside]{sjtuthesis}
 % \documentclass[bachelor, fontset=adobe, openany, oneside, submit]{sjtuthesis}
-\documentclass[master, fontset=adobe,openright,review,zihao=-4]{sjtuthesis}
+\documentclass[master, fontset=adobe,openany,review,zihao=-4]{sjtuthesis}
 % \documentclass[%
 %   bachelor|master|doctor,	% 必选项
 %   fontset=adobe|windows,  	% 只测试了adobe
@@ -22,6 +22,8 @@
 % \addbibresource{bib/chap2.bib}
 \usepackage{caption}
 \usepackage{cleveref}
+\usepackage{listings}
+\usepackage{url}
 
 \begin{document}
 
@@ -71,10 +73,11 @@
 \pagestyle{main}
 \include{tex/introduction}
 \include{tex/relatedwork}
-\include{tex/design}
-\include{tex/implement}
+\include{tex/modeling}
+\include{tex/design_implement}
 \include{tex/evaluation}
 \include{tex/conclusion}
+\include{tex/draft}
 %\include{tex/intro}
 %\include{tex/example}
 %\include{tex/faq}

@@ -2,23 +2,37 @@
 \label{chap:relatedwork}
 
 \section{网络功能虚拟化发展概况}
-2012年10月，ETSI的NFV规范小组在德国的达姆施塔特发表了关于软件定义网络(SDN, Software Defined Network)和OpenFlow的白皮书，期间正式推出了NFV概念。自白皮书发表以来，该小组制定了每两年为一个发布周期的工作计划，持续推出更加具体的协议规范和标准术语定义以及NFV的使用案例。截止本文，NFV小组已经进入了第三个发布周期。
+%ETSI官方背景
+欧洲电信标准化协会(ETSI)作为NFV的发起标准组织，自2013年开始陆续发布了NFV参考架构等系列白皮书。虽然ETSI NFV阶段成果不是强制执行的标准，但是得到了业界的普遍认可，已经成为了业界的事实标准。目前NFV的标准框架已得到各方的基本认可，各厂商也基本按照现有的标准架构开发和推进各自的服务框架。如图 \ref{fig:NFV} 所示，NFV标准框架主要由NFV基础设施(NFV Infrastructure，NFVI)、虚拟网络功能(Virtual Network Functions, VNFs)和NFV管理与编排系统(NFV Management and Orchestration, NFV MANO)三个主要部分组成。其中，NFV基础设施指的是承载具体业务的通过虚拟化技术所管理的数据中心资源。与传统电信机房不同，数据中心具有统一的管理标准和更加普通的x86通用服务器，其维护管理成本和业务升级的成本相较与传统电信业务的中心机房 (Central Office) 要更加低廉。虚拟网络功能是具体业务的运行实体，结合传统电信的业务支撑系统和管理支撑系统(OSS/BSS)作为上层应用系统，以虚拟化软件的形式，运行在NFV基础设施中，并接受管理编排系统的功能管理。而NFV管理和编排子系统作为衔接IT虚拟化基础设施和传统电信业务的关键系统，受到了众多厂家的重点关注，也是目前研究的重点之一。MANO系统负责解析上层业务、映射并管理具体的物理资源、编排具体业务系统等多项重要业务，其重要性不言而喻。需要特别指出的是，对于底层资源即通用的大容量服务器资源的管理，对于传统电信服务来说是全新的问题和挑战。
+\begin{figure}[!htp]
+	\centering
+	\includegraphics[width=1\textwidth]{ETSI.png}
+	\bicaption[fig:NFV]{NFV标准框架}{NFV标准框架 \cite{etsi2013001}}{Fig}{NFV Standard Architecture\cite{etsi2013001}}
+\end{figure}
+自白皮书发表以来，ETSI的NFV规范小组制定了每两年为一个发布周期的工作计划，持续推出更加具体的协议规范和标准术语定义以及NFV的使用案例。截止本文，NFV小组已经进入了第三个发布周期。
 
 在第一个周期2013-2014年内，小组的主要工作目标是：
 \begin{enumerate*}[label=\itshape\alph*)\upshape]
-	\item 推动网络运营商融合NFV。
-	\item 将已有的适用标准纳入网络服务和产品中。
-	\item 以促进创新和培育供应商开放的生态系统为目标，同步地开发新的技术规范。
+	\item 推动网络运营商融合NFV
+	\item 将已有的适用标准纳入网络服务和产品中
+	\item 以促进创新和培育供应商开放的生态系统为目标，同步地开发新的技术规范
 \end{enumerate*}
-截止2014年，工作组除了前期发布的6篇定义性文档，又陆续发布了11篇详细的技术规范，包括。。。 第一套文档标志着NFV的标准化初期工作已经完成，需要对划分的各个工作领域进行进一步的详细定义和约束。
 
-第二个周期2015-2016年，小组的工作重心已经转移到了VIM，VNFM，NFVO以及各功能接口的具体定义中。进一步的，在该阶段的工作中，小组还重点推出了适用于当前NFV服务需求的信息模型参考，在模型中预留了解决各项实际问题的参数接口，为各厂商开发自己的NFV服务框架提供指导。各项文档均已在ETSI官方网站发布。
+截止2014年，工作组除了前期发布的6篇定义性文档，又陆续发布了11篇详细的技术规范。第一套文档标志着NFV的标准化初期工作已经完成，需要对划分的各个工作领域进行进一步的详细定义和约束。第二个周期2015-2016年，小组的工作重心已经转移到了VIM，VNFM，NFVO以及各功能接口的具体定义中。进一步的，在该阶段的工作中，小组还重点推出了适用于当前NFV服务需求的信息模型参考，在模型中预留了解决各项实际问题的参数接口，为各厂商开发自己的NFV服务框架提供指导。各项文档均已在ETSI官方网站发布。目前，NFV规范小组正处在2017-2018发布周期内。根据已发布的计划，在本周期内他们有23个工作目标，包括20个新功能点和3个对上一周期的已发布文档的补充。在该周期内，小组的工作重点是深入定义核心的NFV信息模型，完善支持NFV非业务子系统接口如计费，账单，用户管理，监管，安全等，以及对MANO服务的多方面支持。同时在近些年来，NFV工作组联合了如 Linux Foundation，OpenDayLight 等开源社区以及工业界各服务提供厂商，旨在携手推进NFV落地实现，与现有业务平台平滑过渡衔接。他们推出了各种开源的NFV平台如 OPNFV，OpenSource MANO，Open-O, Cloudify等等。学术界近年来对NFV的研究也进行得如火如荼，相关介绍在第 \ref{chap:Introduction} 章节中已有详细的介绍。
 
-目前，NFV规范小组正处在2017-2018发布周期内。根据已发布的计划，在本周期内他们有23个工作目标，包括20个新功能点和3个对上一周期的已发布文档的补充。在该周期内，小组的工作重点是深入定义核心的NFV信息模型，完善支持NFV非业务子系统接口如计费，账单，用户管理，监管，安全等，以及对MANO服务的多方面支持。同时在近些年来，NFV工作组联合了如Linux Foundation，OpenDayLight等开源社区以及工业界各服务提供厂商，旨在携手推进NFV落地实现，与现有业务平台平滑过渡衔接。他们推出了各种开源的NFV平台如OPNFV，OpenSource MANO，Open-O, Cloudify等等。学术界近年来对NFV的研究也进行得如火如荼，相关介绍在第 \ref{chap:Introduction} 章节中已有详细的介绍。
+\begin{figure}[!htp]
+	\centering
+	\includegraphics[width=1.0\textwidth]{clearwater/clearwater_arch2.png}
+	\bicaption[fig:clearwater]{Clearwater系统架构图}{Clearwater系统架构图\cite{clearwater}}{Fig}{Clearwater Architecture\cite{clearwater}}
+\end{figure}
+\section{Clearwater平台介绍}
+\label{intro:clearwater}
+目前全球的运营开发商都在加速商用的VoLTE开发， IMS是4G  VoLTE商用组件之一，因此也引起了工业界格外的重视。NFV兴起以来，工业界纷纷在尝试将IMS系统部署在NFV平台环境中，探索IMS应用场景在NFV生产环境中的实现，希望能够利用虚拟化技术加速电信业务的研发和部署，降低业务升级的成本和周期。根据本文的调研，在开源的IMS系统领域，有两个十分知名的项目：Clearwater \cite{clearwater}与 Kamalio \cite{kamalio}。而在这两者之中，Clearwater系统更是因为其为云计算平台量身打造的多媒体子系统定位而广受众多厂商和研发人员的欢迎，开发社区十分火热，产品也在迅速的迭代中。它采用大型互联网软件架构的设计思路，以微服务的方式设计各个组件，使得系统本身具有很好的伸缩能力，成为了一个电信级别的开源IMS系统。Clearwater分布式版本的系统架构图如图 \ref{fig:clearwater} 所示，可以看出该系统主要有五个核心的组件：Bono，Sprout，Dime，Vellum和Homer以及其他组件组成。其中，Bono节点作为SIP的边界代理，负责承担IMS服务的接入业务，通过WebRTC接口的为客户端提供服务接入点。Sprout节点作为注册和权限管理的路由代理，主要负责处理客户端的认证和应用服务器ISC接口的通信。Sprout节点还包含内置的MMTEL应用服务器，在运行过程中Sprout不负责存储任何持久化的数据，而是通过HTTP协议从Dime和Homer服务中读取HSS的配置信息，如用户信息和MMTEL服务配置等。Sprout还通过远程调用接口从Vellum中获取用户的注册信息和当前状态。Dime节点主要负责运行Homestead和Ralf服务，包括存储HSS信息的缓存。Homer是一个标准的用户设置存储服务，通过标准的接口来增删改查用户持久化数据。而Vellum则负责存储各种持久化信息，包括用户的注册注册信息，当前服务的始终状态以及各种权限和密钥等。Ellis作为一个前端管理工具，并不参与IMS实际业务，只是官方提供的一个用于管理整个平台的可视化工具原型。
 
+Clearwater是针对云计算数据中心开发的IMS系统。众多大型电信运营商纷纷采用基于IMS的标准架构作为其IP语音通话、视频和消息服务的基础构建，用以取代基于传统电路交换系统的上一代VoIP业务系统。Clearwater遵循IMS架构原则，实现了IMS核心网络所需的所有关键标准化接口。有别于别的IMS实现，Clearwater是从云计算作为基础设施的角度设计的。通过结合已在许多全球Web应用程序中验证过的设计模式和开源软件组件，Clearwater实现了前所未有的大规模可扩展性和卓越的成本效益的组合。正因为有这样的特点，本文选取了Clearwater作为具体的NFV应用平台，在其基础上测试本文系统的原型。
 
 \section{常见的网络I/O虚拟化技术}
-虚拟化技术作为NFV的基础，是实现NFV的关键技术。I/O虚拟化，特别是网络I/O虚拟化，更是直接影响了NFV性能的关键因素。在本节中，我们将介绍和分析三种主流的网络虚拟化模型：设备仿真模型(Device Emulation)，分离驱动程序模型(Split-driver)和硬件辅助模型(Hardware-assisted),并对这三种模型在实际应用场景下做出对比。
+虚拟化技术作为NFV的基础，是实现NFV的关键技术。I/O虚拟化，特别是网络I/O虚拟化，更是直接影响了NFV性能的关键因素。在本节中，将介绍和分析三种主流的网络虚拟化模型：设备仿真模型(Device Emulation)，分离驱动程序模型(Split-driver)和硬件辅助模型(Hardware-assisted),并对这三种模型在实际应用场景下做出对比。
 
 \subsection{设备模拟模式}
 设备模拟模式是一种通过在虚拟机监视器中模拟敏感指令和特权指令的方式来模拟物理设备I/O操作的全虚拟化实现方式。如图 \ref{fig:device_emu} 所示。这种模式充分利用二进制翻译技术和直接执行技术的组合来从客户操作系统中抽象和分离底层硬件，实现纯软件方式的硬件仿真。虚拟机操作系统实例和用户级别指令可以在没有感知底层虚拟化环境的情况下不加修改地运行，所以设备模拟模式为I/O操作提供了最佳性能隔离和安全性，简化了客户端虚拟机的迁移操作和提升了其可移植性。工业界有很多成熟的产品如VMware Workstation \cite{sugerman2001virtualizing} 和VMware ESX Server \cite{ahmad2003analysis} 都支持这种I/O虚拟化的方式。此外，XEN和KVM的QEMU也可以配置支持设备模拟模式的I/O虚拟化。
@@ -40,7 +54,7 @@
 
 
 \subsection{硬件辅助模式}
-设备仿真和分离驱动模式都被分类为基于软件的I/O虚拟化，这种基于软件的模式实现了丰富的I/O设备功能同时简化了对虚拟机I/O设备的管理。然而，这种方式也并不是完美无缺的，纯软件实现方式在面对大量的陷入-仿真操作或者大块数据拷贝的时候会面临高昂的系统开销，这个时候我们可以借助硬件辅助的模式来解决我们的瓶颈。硬件辅助I/O虚拟化模式是为共享本地设备而开发的，它通过继承I/O内存管理单元 (IOMMU) 的用户权限来使用直接I/O技术从而实现绕开虚拟化的内存保护和地址转换，为虚拟机直接分配真实的I/O设备。PCI-SIG工作组针对这种I/O虚拟化的方式制定了规范，通过为每个虚拟机提供独立的内存空间，中断和DMA流来绕过虚拟机监视器直接参与数据处理。特别的，PCI-SIG推出了单根I/O虚拟化 (SR-IOV) 技术，这项技术为针对PCIe设备设计了一组硬件增加技术，通过去除虚拟机监视器在数据包分类和内存地址翻译的干预来实现基于专门硬件的增强。
+设备仿真和分离驱动模式都被分类为基于软件的I/O虚拟化，这种基于软件的模式实现了丰富的I/O设备功能同时简化了对虚拟机I/O设备的管理。然而，这种方式也并不是完美无缺的，纯软件实现方式在面对大量的陷入-仿真操作或者大块数据拷贝的时候会面临高昂的系统开销，这个时候可以借助硬件辅助的模式来解决这种情况下的瓶颈。硬件辅助I/O虚拟化模式是为共享本地设备而开发的，它通过继承I/O内存管理单元 (IOMMU) 的用户权限来使用直接I/O技术从而实现绕开虚拟化的内存保护和地址转换，为虚拟机直接分配真实的I/O设备。PCI-SIG工作组针对这种I/O虚拟化的方式制定了规范，通过为每个虚拟机提供独立的内存空间，中断和DMA流来绕过虚拟机监视器直接参与数据处理。特别的，PCI-SIG推出了单根I/O虚拟化 (SR-IOV) 技术，这项技术为针对PCIe设备设计了一组硬件增加技术，通过去除虚拟机监视器在数据包分类和内存地址翻译的干预来实现基于专门硬件的增强。
 \begin{figure}[!htp]
 	\centering
 	\includegraphics[width=0.8\textwidth]{SR_IOV.jpg}
@@ -50,6 +64,7 @@ SR-IOV虚拟化模式结构如图 \ref{fig:hardware_ass} 所示，一个支持SR
 
 
 \section{非一致性存储访问架构}
+\label{sec:numa}
 众所周知，NFV的目标是在大容量的标准通用服务器上运行传统通信业务，而现在通用的标准服务器基本都是遵循非一致性存储访问架构 (NUMA, Non-Uniform Memory Access) 的服务器阵列，为了更好地完成NFV到通用服务器上的迁移，了解通用服务器的基础架构十分必要。图 \ref{fig:numa} 所示的是Intel Haswell架构下多核处理器示意图，在NUMA服务器中每个处理节点 (Socket/Die) 与通过内存访问控制器 (MC，Memory Controller) 与相邻的内存直接相连。同一个处理节点中的多个物理核拥有自己独占的L1/L2级缓存并且通过节点内部链路通道共享L3缓存，内存访问控制器以及PCI-e接口。在一个处理节点内部的的数据传输是通过点对点的高速数据通路 (例如Intel的QPI) 传输的。除了同一个节点内通信，不同的节点间也由相同的高速数据通路相连，不同的处理器节点要访问别的节点的内存时，需要通过内存控制器进行远程访问。
 \begin{figure}[!htp]
 	\centering
@@ -57,6 +72,12 @@ SR-IOV虚拟化模式结构如图 \ref{fig:hardware_ass} 所示，一个支持SR
 	\bicaption[fig:numa]{Intel Haswell架构非一致性存储访问示意图}{Intel Haswell架构非一致性存储访问示意图}{Fig}{NUMA Architecture}
 \end{figure}
 在NUMA架构下，本地和远程内存访问由于机制的差异存在性能上的差异，而节点内共享的内存控制器在竞争过高的情况下也容易成为性能瓶颈导致内存访问性能的剧烈下降，所以如何针对多核通用服务器下非一致性访问的特性来优化应用一直是学术界所面对的经典挑战之一。NFV应用迁移到多核服务器中，不可避免地会遇到NUMA架构所带来的问题，而SFC的服务组织形式下同一条服务链上的虚拟机彼此之间存在大量的数据拷贝传输，如何处理好基于物理架构的物理资源对实现高性能的NFV具有重要意义。
+
+\begin{figure}[!htp]
+	\centering
+	\includegraphics[width=0.8\textwidth]{observation/observation_experiment.pdf}
+	\bicaption[fig:illustrative]{模拟应用性能测试示意图}{模拟应用性能测试示意图}{Fig}{Illustrative Experiment Setup}
+\end{figure}
 \begin{figure}[!htp]
 	\centering
 	\subfigure[Netperf带宽测试]{
@@ -76,21 +97,20 @@ SR-IOV虚拟化模式结构如图 \ref{fig:hardware_ass} 所示，一个支持SR
 \section{多核物理机性能观测与分析}
 \label{related:observe}
 
-在多核物理机中，由于存在非一致性存储访问架构的影响，传统应用都针对了NUMA问题进行了对应的优化，如经典的NUMA-aware的线程调度器numad\footnote{https://access.redhat.com/documentation/en-us/red\_hat\_enterprise\_linux/7/html/performance\_tuning\_guide/sect-red\_hat\_enterprise\_linux-performance\_tuning\_guide-tool\_reference-numad}以及已经集成进Linux内核的Auto-NUMA-Balancing机制\footnote{www.redhat.com/files/summit/2014/summit2014\_riel\_chegu\_w\_0340\_automatic\_numa\_balancing.pdf}。在NFV应用的场景下，网络功能单元是以虚拟机的形式存在，节点间的数据传输实质上是虚拟机利用网络虚拟化的技术进行通信。从服务器硬件的角度看，可以当做一个虚拟机线程向另一个虚拟机线程拷贝或者接收数据。那么在这样的前提下，虚拟机线程所分配的物理资源之间的亲和度关系对虚拟机线程间通信的性能就造成影响。为了验证这一想法，我们在一台通用服务器上进行了模拟NFV应用的的测试。测试平台具体参数见实验部分的表 \ref{tab:configure} ，使用的虚拟化平台为KVM，网络虚拟化方式为virtio。我们选取了Netperf和Httperf两个基准测试工具，分别模拟微观的数据包负载和宏观的应用负载下来测试性能表现。实验使用两台虚拟机，其中一台固定在一个处理器节点上并绑定本地内存作为虚拟机的分配内存，而另一台虚拟机则不断更改所绑定的物理核及内存，以所有绑定情况作为测试样本，测试的结果如图
- \ref{exp:observe} 所示。
+在多核物理机中，由于存在非一致性存储访问架构的影响，传统应用都针对了NUMA问题进行了对应的优化，如经典的NUMA-aware的线程调度器numad\footnote{https://access.redhat.com/documentation/en-us/red\_hat\_enterprise\_linux/7/html/performance\_tuning\_guide/sect-red\_hat\_enterprise\_linux-performance\_tuning\_guide-tool\_reference-numad}以及已经集成进Linux内核的Auto-NUMA-Balancing机制\footnote{www.redhat.com/files/summit/2014/summit2014\_riel\_chegu\_w\_0340\_automatic\_numa\_balancing.pdf}。在NFV应用的场景下，网络功能单元是以虚拟机的形式存在，节点间的数据传输实质上是虚拟机利用网络虚拟化的技术进行通信。从服务器硬件的角度看，可以当做一个虚拟机线程向另一个虚拟机线程拷贝或者接收数据。那么在这样的前提下，虚拟机线程所分配的物理资源之间的亲和度关系对虚拟机线程间通信的性能就造成影响。为了验证这一想法，本文在一台通用服务器上进行了模拟NFV应用的的测试。测试平台具体参数见实验部分的表 \ref{tab:configure}，使用的虚拟化平台为KVM，网络虚拟化方式为virtio，实验的设置如图\ref{fig:illustrative}所示。这里我们选用的基准测试工具如表\ref{tab:illustrate}所示，分别模拟微观的数据包负载和宏观的应用负载下来测试性能表现。实验使用两台虚拟机，其中一台固定在一个处理器节点上并绑定本地内存作为虚拟机的分配内存，而另一台虚拟机则不断更改所绑定的物理核及内存，以所有绑定情况作为测试样本，测试的结果如图 \ref{exp:observe} 所示。
 
-我们使用盒图的方式来展现模拟应用性能测试观测结果，分别观测了微观下数据包带宽和延迟以及宏观下网络应用应用的测试结果。根据观测不难发现，在分配了相同的物理资源下，不同的资源亲和度情况下性能结果分布的离散程度很高，数据盒的宽度较大并且有大量的离群点出现，离群点之间的观测值差异甚至达到了接近三倍的差距如图 \ref{exp:netperf_bandwidth} 所示。根据这样的测试结果，我们认为针对虚拟机物理资源间的亲和度来优化服务链中的资源分配是十分必要的。
 
-\section{Clearwater平台介绍}
-\label{intro:clearwater}
-目前全球的运营开发商都在加速商用的VoLTE开发，多媒体子系统 (IMS)是4G VoLTE商用组件之一，因此也引起了工业界格外的重视。NFV兴起以来，工业界纷纷在尝试将IMS系统部署在NFV平台环境中，探索IMS应用场景在NFV生产环境中的实现，希望能够利用虚拟机技术加速电信业务的研发和部署，降低业务升级的成本和周期。根据我们的调研，在开源的IMS系统领域，有两个十分知名的项目：Clearwater\footnote{项目由Metaswitch Networks 提供赞助，官方网址为 http://www.projectclearwater.org/ }与Kamalio\footnote{https://www.kamailio.org/w/}。而在这两者之中，ClearWater系统更是因为其为云计算平台量身打造的多媒体子系统定位而广受众多厂商和研发人员的欢迎，开发社区十分火热，产品也在迅速的迭代中。它采用大型互联网软件架构的设计思路，以微服务的方式设计各个组件，使得系统本身具有很好的伸缩能力，成为了一个电信级别的开源IMS系统。
-其分布式版本的系统架构图如图 \ref{fig:clearwater} 所示，可以看出该系统主要有三个核心的组件，Sprout，Dime，Vellum和其他边缘组件组成。其中，Sprout节点作为注册和权限管理的路由代理，主要负责处理客户端的认证和应用服务器ISC接口的通信。Sprout节点还包含内置的MMTEL应用服务器，在运行过程中Sprout不负责存储任何持久化的数据，而是通过http协议到Homestead和homer服务中读取HSS的配置信息，如用户信息和MMTEL服务配置等；通过远程调用接口从Vellum中获取用户的注册信息和当前状态等。Dime节点主要负责运行Homestead和Ralf服务，包括对HSS信心的缓存等。而Vellum服务则负责存储各种持久化信息，包括用户的注册注册信息，当前服务的始终状态以及各种权限和密钥等。
-\begin{figure}[!htp]
+\begin{table}[htb]
 	\centering
-	\includegraphics[width=1.0\textwidth]{clearwater/clearwater_arch.png}
-	\bicaption[fig:clearwater]{Clearwater系统架构图}{Clearwater系统架构图}{Fig}{Clearwater Architecture}
-\end{figure}
-Clearwater是针对云计算数据中心开发的IMS系统。众多大型电信运营商纷纷采用基于IMS的标准架构作为其IP语音通话、视频和消息服务的基础构建，用以取代基于传统电路交换系统的上一代VoIP业务系统。Clearwater遵循IMS架构原则，实现了IMS核心网络所需的所有关键标准化接口。有别于别的IMS实现，Clearwater是从云计算作为基础设施的角度设计的。通过结合已在许多全球Web应用程序中验证过的设计模式和开源软件组件，Clearwater实现了前所未有的大规模可扩展性和卓越的成本效益的组合。
+	\bicaption[tab:illustrate]{验证性实验基准测试工具}{验证性实验基准测试工具}{Table}{Benchmarks}
+	\begin{tabular}{ | l | p{6cm} |}\hline
+		\textbf{基准测试工具集} &							 \textbf{选用的实际负载}  				\\ 	\hline
+		Netperf 2.6.0 	&  TCP\_STREAM, TCP\_RR	  \\ \hline
+	    Httperf 0.9.0	&  Apache 2.4.7   \\ \hline
+	\end{tabular}
+\end{table}
+
+本文使用盒图的方式来展现模拟应用性能测试观测结果，分别观测了微观下数据包带宽和延迟以及宏观下网络应用应用的测试结果。根据观测不难发现，在分配了相同数量的物理资源前提下，盒图中数据盒的宽度较大并且有大量的离群点出现，离群点之间的观测值差异甚至达到了接近三倍的差距如图 \ref{exp:netperf_bandwidth} 所示，这表明在不同的资源组合模式下测试性能结果分布的离散程度较大，即虚拟机之间的数据传输性能在不同的虚拟机资源亲和度下存在较大的波动。根据这样的测试观测结果，可以认为针对虚拟机物理资源间的亲和度来优化服务链中的资源分配从而提升服务链数据传输性能是十分必要的。
 
 \section{本章小结}
 本章主要介绍了与网络功能虚拟化技术已经本课题相关的一些技术背景。首先，本章简单总结了下网络功能虚拟化的发展历史和当前的发展现状，介绍了网络功能虚拟化出现的背景，包括与网络功能虚拟户实现相关的虚拟化技术以及多核服务器的架构背景。通过多核服务器的性能观测实验说明了网络功能虚拟化在多核服务器中实现索要面临的实际问题。最后本章着重介绍了本研究所基于NFV实际应用平台Clearwater，包括其业务功能简介和基本架构介绍。

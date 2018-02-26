@@ -1,8 +1,8 @@
 \chapter{方案实现}
 \label{chapter:implement}
-本章重点介绍了底层感知的高性能NFV平台的具体实现。本文中，设计方案的原型的实现是在Clearwater应用框架的基础进行的。ClearWater是成熟的商用语音多媒体子系统业务框架之一。由于Clearwater在开源平台Github上开源了其所有代码，我们可以轻易的获取并在我们手中的大容量标准通用服务器上部署这项多媒体语音子系统。因此，本系统的原型实现也选择在Clearwater平台上实现。值得指出的是，虽然本系统的实现是基于ClearWater的，但是本设计中的核心设计思想和设计架构具有比较广泛的适用性，也可以适用于其他NFV业务平台。本设计使用非侵入的插入中间件方式实现，没有对业务系统有任何更改，也就是说本设计也能够扩展到其他的NFV业务中，具有一定的可扩展性。
-\section{总体算法框架实现}
-本设计的核心映射策略算法如算法 \ref{alg:greedy} 所示。根据从底层信息采用模块获取的参数信息，我们提出两种基于贪心思想的映射策略。第一种是基于服务链上任意两个相邻节点具有最大通信带宽的最大带宽策略 (GMB, Greedy Maximum Bandwidth)，第二种是任意两个相邻节点具有最小通信延迟的最小延迟策略 (GML, Greedy Minimum Latency)。但带宽和延迟这两个影响因素同时可以提高整体映射策略的收益时，这两种策略可以同时被用于同一个服务链的映射生成。如果被映射的服务需要较高的通信带宽并根据其带宽来衡量其服务质量，例如数据传输服务，那么这种服务就适合使用GMB算法来生成映射结果；如果服务链的服务质量是由整体的通信延迟所决定的，那么GML便更适合这类的应用场景。当然也可以综合考虑这两个因素，使用整数线性规划的方法来求解，近期有不少针对SFC资源映射的研究就是利用这种方法来求解。
+本章重点介绍了底层感知的高性能NFV平台的具体实现。本文中，设计方案的原型的实现是在Clearwater应用框架的基础进行的。Clearwater是成熟的商用语音多媒体子系统业务框架之一。由于Clearwater在开源平台Github上开源了其所有代码，任何人可以轻易的获取并在手中的大容量标准通用服务器上部署这项多媒体语音子系统。因此，本系统的原型实现也选择在Clearwater平台上实现。值得指出的是，虽然本系统的实现是基于ClearWater的，但是本设计中的核心设计思想和设计架构具有比较广泛的适用性，也可以适用于其他NFV业务平台。本设计使用非侵入的插入中间件方式实现，没有对业务系统有任何更改，也就是说本设计也能够扩展到其他的NFV业务中，具有一定的可扩展性。
+\section{总体算法框架设计}
+本设计的核心映射策略算法如算法 \ref{alg:greedy} 所示。根据从底层信息采用模块获取的参数信息，本文提出两种基于贪心思想的映射策略。第一种是基于服务链上任意两个相邻节点具有最大通信带宽的最大带宽策略 (GMB, Greedy Maximum Bandwidth)，第二种是任意两个相邻节点具有最小通信延迟的最小延迟策略 (GML, Greedy Minimum Latency)。但带宽和延迟这两个影响因素同时可以提高整体映射策略的收益时，这两种策略可以同时被用于同一个服务链的映射生成。如果被映射的服务需要较高的通信带宽并根据其带宽来衡量其服务质量，例如数据传输服务，那么这种服务就适合使用GMB算法来生成映射结果；如果服务链的服务质量是由整体的通信延迟所决定的，那么GML便更适合这类的应用场景。当然也可以综合考虑这两个因素，使用整数线性规划的方法来求解，近期有不少针对SFC资源映射的研究就是利用这种方法来求解。
 \begin{algorithm} 
 	\caption{基于贪心的映射策略}  
 	\label{alg:greedy}  
@@ -36,65 +36,53 @@
 		\State End
 	\end{algorithmic}  
 \end{algorithm} 
-算法 \ref{alg:greedy} 的具体步骤如下：当服务链请求被解析成服务链链表输出后，算法 \ref{alg:greedy} 将该链表$S$作为算法输入，顺序遍历该链表，针对链表中每个元素$i$,利用公式 \ref{label} 计算其收益函数，从待选实例中筛选出收益最大的实例并判断该实例所在计算节点的L3cache命中率，若未命中的比例超过90\%则放弃该实例选择次优收益的实例并继续比较其cache的命中率，直到有合适的实例被选中为止。通过以上的算法 \ref{alg:greedy} ，理论上我们可以选择出相对收益最高的服务链与实例的映射链表。算法的输出结果将作为输入传入动态映射模块，该模块将根据该结果进行服务链组链操作。
+算法 \ref{alg:greedy} 的具体步骤如下：当服务链请求被解析成服务链链表输出后，算法 \ref{alg:greedy} 将该链表$S$作为算法输入，顺序遍历该链表，针对链表中每个元素$i$,利用公式 \ref{equ:profit} 计算其收益函数，从待选实例中筛选出收益最大的实例并判断该实例所在计算节点的L3cache命中率，若未命中的比例超过90\%则放弃该实例选择次优收益的实例并继续比较其cache的命中率，直到有合适的实例被选中为止。通过以上的算法 \ref{alg:greedy} ，理论上可以选择出相对收益最高的服务链与实例的映射链表。算法的输出结果将作为输入传入动态映射模块，该模块将根据该结果进行服务链组链操作。
 
 
 \section{底层信息采样模块}
-我们使用经典的内存访问测试工具Stream\footnote{https://www.cs.virginia.edu/stream/} 和Intel Memory Latency Checker\footnote{https://software.intel.com/en-us/articles/intelr-memory-latency-checker} 作为我们的采样工具，预先运行并获取所有运行时参数，作归一化处理分别后存入如下的矩阵中。在矩阵 $D$ \ref{matrix} 中，元素 $D_{ij}$表示当使用第 $i$ 号访问在位于 $j$ 的资源时，所需要的性能开销。我们所使用的平台有32个物理核，即可以得到两个32x32的矩阵。所生成的信息参考矩阵被以文件的形式存储在系统硬盘上，随时供其他模块读取。
-$$
-M =
-\begin{pmatrix}
-\label{matrix}
-10      & 8      & \cdots & 4      \\
-9      & 10      & \cdots & 5      \\
-\vdots & \vdots & \ddots & \vdots \\
-4      & 3      & \cdots & 10     \\
-\end{pmatrix}
-$$
+本文使用经典的内存访问测试工具Stream\footnote{https://www.cs.virginia.edu/stream/} 和Intel Memory Latency Checker\footnote{https://software.intel.com/en-us/articles/intelr-memory-latency-checker} 作为采样工具，预先运行并获取所有运行时参数，作归一化处理分别后存入如下的矩阵中。本文所使用的平台有32个物理核，即可以得到两个32x32的矩阵。所生成的信息参考矩阵被以文件的形式存储在系统硬盘上，随时供其他模块读取。
+
+除了预处理的采样信息，底层信息采样模块包括一个动态的节点负载的监测工具，通过加载系统msr模块来使用PCM工具动态的监测每个物理核当期的负载信息,监测模块每秒更新，将结果输出至文件中。本文中重点关注如表格 \ref{tab:dynamic} 中所列出的信息，其中L3 cache的命中率可作为当前处理器节点的负载参考指标而L2 Cache的命中率可以作为当前物理CPU的负载参考。
+
+\begin{table}[!htb]
+	\centering
+	\bicaption[tab:dynamic]{服务器实时监测参数}{服务器实时监测参数}{Table}{Table of State Parameters of Running Server}
+	\begin{tabular}{ | l | p{6cm} |}\hline
+\textbf{参数} &							 \textbf{参数涵义}  				\\ 	\hline
+IPC   & 当前CPU周期指令数\\ \hline
+L3MISS & L3 cache未命中次数\\ \hline
+L2MISS & L2 cache未命中次数\\ \hline
+L3HIT & L3 cache 命中率 (0.00-1.00)\\ \hline
+L2HIT & L2 cache 命中率 (0.00-1.00)\\ \hline
+L3MPI & 每个指令周期内的L3cache miss数\\ \hline
+L2MPI & 每个指令周期内的L2cache miss数\\ \hline
+READ  & 内存读取数 (GBytes)\\ \hline
+WRITE & 内存写入数 (in GBytes)\\ \hline
+	\end{tabular}
+\end{table}
 
 
 \section{服务链分析模块}
-服务链分析模块主要负责业务接口，根据上层服务的具体需求来选择选择具体组链方式生成逻辑的服务链链表。这里我们针对Clearwater的具体业务总结了主要业务流程和所需的服务链请求。业务流程主要包括：用户注册流程，初始化拨号流程，通话流程，和通话终止流程。每个流程的具体流程如图 \ref{fig:flow_register} 到图 \ref{fig:flow_terminate} 所示。
+服务链分析模块主要负责业务接口，根据上层服务的具体需求来选择选择具体组链方式生成逻辑的服务链链表。这里针对Clearwater的具体业务总结了主要业务流程和所需的服务链请求。业务流程主要包括：用户注册流程，初始化拨号流程，通话流程，和通话终止流程。每个流程的具体流程如图 \ref{fig:flow_register} 到图 \ref{fig:flow_terminate} 所示。根据所总结的服务流程和对应的服务链，本文将每个服务链以链表的形式记录下来存储到预定义的配置文件中。当收到某一类服务请求时，服务链分析模块根据服务请求类型在预定义的文件中选择对应的服务链链表，完成服务链服务分析。具体的服务流程如下：
 
-\textbf{用户注册流程}如图 \ref{fig:flow_register} 所示，主要涉及到的网络功能节点为Sprout、Homestead与HSS。当客户端发起注册请求时，Sprout节点将从Homestead节点中获取认证信息，
-\begin{figure}[!htp]
-	\centering
-	\includegraphics[width=1.0\textwidth]{clearwater/1.png}
-	\bicaption[fig:flow_register]{用户注册服务流程图}{用户注册服务流程图}{Fig}{User Registration}
-\end{figure}
+%TODO 详细叙述流程过程
+\textbf{用户注册流程}如图 \ref{fig:flow_register} 所示，主要涉及到的网络功能节点为Sprout和Homestead。当客户端发起注册请求时，Sprout节点将从Homestead节点中获取认证信息，如果没有相关认证记录则请求拒绝， Sprout节点同时缓存该请求记录，一旦后续出现相同请求则直接处理不再查询。如果查询到相关认证记录认证通过，则向客户端返回认证成功。如果有第三方认证，则跳转到第三方登记流程。
 
-\begin{figure}[!htp]
-	\centering
-	\includegraphics[width=1.0\textwidth]{clearwater/2.png}
-	\bicaption[fig:flow_dialog]{初始化拨号流程}{初始化拨号流程}{Fig}{Init Dialog}
-\end{figure}
+\textbf{初始化拨号流程}如图 \ref{fig:flow_dialog}和图 \ref{fig:flow_dialog2} 所示，主要参与的网络功能有Sprout、Homestead当客户端向Sprout节点发起通话请求，Sprout节点通过HTTP请求从Homestead节点缓存中获取拨号者和被拨号信息，同时生成本次服务的iFC\footnote{http://www.3gpp.org/ftp/Specs/archive/29\_series/29.228/29228-b70.zip appendices B and F}。随后Sprout向ENUM组件中查询所拨打用户是否在线，如果在线则Sprout完成查询终止iFC，并根据查询结果向被拨打者发起SIP INVITE请求，同时向AS(Vellum)中记录SIP Ringing状态。当被拨叫客户端接听后，返回SIP 200 OK，则通过Sprout节点更新AS(Vellum)记录。
 
-\begin{figure}[!htp]
-	\ContinuedFloat
-	\centering
-	\includegraphics[width=1.0\textwidth]{clearwater/3.png}
-	\bicaption[fig:flow_dialog2]{初始化拨号流程 （续）}{用户注册服务流程图}{Fig}{Init Dialog (con't)}
-\end{figure}
+\textbf{通话流程}如图\ref{fig:flow_inDialog}所示，客户端通过Sprout不断在通话过程中不断更新状态信息到AS(Vellum)中，更新数据同样通过Sprout反馈到被叫客户端中。
 
-\begin{figure}[!htp]
-	\centering
-	\label{fig:flow_inDialog}
-	\includegraphics[width=1.0\textwidth]{clearwater/4.png}
-	\bicaption[fig:flow_inDialog]{通话流程}{通话流程}{Fig}{In Dialog}
-\end{figure}
-
-\begin{figure}[!htp]
-	\centering
-	\label{fig:flow_terminate}
-	\includegraphics[width=1.0\textwidth]{clearwater/5.png}
-	\bicaption[fig:flow_terminate]{通话终止流程}{通话终止流程}{Fig}{Terminate Dialog}
-\end{figure}
+\textbf{通话终止流程}如如图\ref{fig:flow_terminate}所示，当通话结束，客户端发起挂断请求，Sprout将状态存储到AS(Vellum)中,并向被拨号者发起SIP BYE请求，请求响应后同样更新AS(Vellum)记录，返回SIP 200 OK，通话终止。
 
 
 
 
+\newpage
+%TODO 加入ENUM模块修改方法
 \section{动态映射模块}
-在该模块中，我们将需要根据服务链分析模块中生成的服务链组织链表通过算法 \ref{alg:greedy} 映射成为具体的实例链表，并根据实例链表完成服务链的组件。具体来说，我们在初始化阶段将所有的实例具体信息录入系统，包括其具体的网络功能、所分配的物理资源信息以及详细的配置参数。当具体的映射策略生成后，我们从实例列表中将实例的ip提出，通过绑定到DNS服务器的解析目录和转发列表中从而实现实例之间的物理链路组建。
+%TODO 动态映射算法具体实现
+在该模块中，本设计将需要根据服务链分析模块中生成的服务链组织链表通过算法 \ref{alg:greedy} 映射成为具体的实例链表，并根据实例链表完成服务链的组件。具体来说，在初始化阶段将所有的实例具体信息录入系统，包括其具体的网络功能、所分配的物理资源信息以及详细的配置参数。当具体的映射策略生成后，本设计从实例列表中将实例的ip提出，通过绑定到DNS服务器的解析目录和转发列表中从而实现实例之间的物理链路组建。
+
 
 \section{本章小结}
 本章主要介绍了基于底层感知的高性能NFV平台的具体实现。详细介绍了平台的总体算法以及底层信息采样模块、服务链分析模块和动态映射模块的一些细节信息，给出了算法的伪代码实现以及实际服务链的流程分析。

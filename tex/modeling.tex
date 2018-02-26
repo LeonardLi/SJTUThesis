@@ -1,0 +1,118 @@
+\chapter{网络功能服务链资源分配分析与建模}
+为了更加直观和量化来处理IMS系统中服务链的资源分配问题，需要对于服务链和底层所运行的平台进行抽象建模。本文主要针对IMS服务链背景下的网络功能映射问题，从所使用的虚拟资源角度出发，将其归结为一类整数线性规划问题，并综合底层平台信息等因素提出了可行的优化资源分配的方法。
+
+\section{问题概述}
+
+%TODO 加入Clearwater的具体服务用例
+
+如前文所述，网络功能的放置和组链问题实质上是处理一系列通过网络连接的虚拟网络功能，在IMS服务中即具体的各项服务功能域来实现某个特定的网络服务。网络流在端到端的路径上，经过一组特定的网络功能，实现客户所需的网络服务。本质上这个问题可以被分解为两个步骤：放置网络功能和组织服务链。其中，放置网络功能决定了为了满足当前的服务需求，需要在当前的服务器上部署多少
+进一步的，为了在实际场景中解决此问题，需要对该问题的前提做一些约束。本文所解决的问题基于以下的假设：
+\begin{enumerate}
+	\item 每个虚拟机实例仅运行一种特定的网络功能应用。网络功能与虚拟机存在多种多样的映射关系，其中，一对一的这种映射关系目前成为了主流。随着轻量级虚拟机的出现\cite{martin s2014clickos,manco2017my},一台物理机上所能承载的虚拟机数量得到了极大地提升，因此这种单一虚拟机单一网络功能的模式可以实现复杂的NFV应用。
+	\item  每个虚拟机应当专注于处理本身运行的网络功能负载，并且尽量避免由于其他无关业务所带来的性能开销。因为本文选择了单核虚拟机并绑定了虚拟CPU到特定的物理CPU从而减少多核调度所带来的额外开销以及因被系统调度引起的上下文切换。
+	\item 针对每种特定的网络功能，都有类似资源池的运行实例群组来保证资源的可用性和可扩展性。
+\end{enumerate}
+
+
+\section{关键概念定义及模型}
+接下来需要定义本文模型中的一些输入、输出和相应的约束目标。上标的字母分别表示服务链请求S、物理资源P、网络功能节点N和节点的链路L。
+
+\textbf{基础设施和服务链} 在与计算的场景下，各种资源都以资源池的方式对外提供。NFV基础设施和每个服务链都可以用一个无向图$G = (N,L)$来表示。 $N$在云计算环境中表示运行在物理机器上的虚拟机实例，在服务链中表示每个网络功能节点。每个虚拟机上运行着某一个特定的虚拟网络功能。类似的，每个无向边$(i,j) \in L$表示了两个虚拟机实际的网络通讯链路或者服务链中某个逻辑连接。这样的描述可以适用于所有的服务链转发图。在实际的物理环境中，通用的商用服务器所拥有的物理资源是有限的，在本文的模型中，本文使用$C^{P}$和$M^{P}$分别表示每台物理机当前可用的CPU和内存余量。同样的，每个虚拟机之间的物理连接也存在理论的带宽上限$B_{i,j}^{P}$和传输延迟$D_{i,j}^{P}$。对于一条特定的服务链而言，其所需的物理总量也是一定的，本文用$C_{i}^{S}$,$M_{i}^{S}$来表示。除此之外，
+\textbf{虚拟网络功能}
+
+\textbf{服务链请求}
+
+\textbf{决策变量}
+
+\begin{table}[htb]
+	\centering
+	\bicaption[tab:variables]{符号表}{符号表}{Table}{Symbols}
+	\begin{tabular}{ | l | p{6cm} |}\hline
+		\textbf{符号} &							 \textbf{意义}  				\\ 	\hline
+		$C^{P}$   &	服务器可用的处理器数量  \\ \hline
+		$M^{P}$	  & 服务器可用的内存数量    \\ \hline
+	           &    \\ \hline
+	 		   &    \\ \hline
+	           &    \\ \hline
+	           &    \\ \hline
+	\end{tabular}
+\end{table}
+
+
+\textbf{Objective:} 
+
+\begin{equation}
+\max \sum_{(i,j)\in L , (k,l)\in L^{P}, s \in S} p_{k,l,s} \times A_{i,j,s,k,l}^{L}
+\end{equation}
+
+\textbf{Subject to:} 
+
+\begin{align}	
+	\sum_{(i,j)\in L,(k,l) \in L^{P},s\in S}A_{i,j,s,k,l}^{L} \times I^{cpu}_{i,j}  \leq C^{P},\forall s \in S \\
+	\sum_{(i,j)\in L,(k,l) \in L^{P},s\in S}A_{i,j,s,k,l}^{L} \times I^{mem}_{i,j} \leq M^{P}, \forall s \in S \\ %所需物理资源不能超出已有资源上限
+	%A_{i,s,j}^{N} \leq 	\sum  \\ % Domain i 中至少有一个可用的实例
+	B^{s} = min \{B_{s,k,l} \times A_{i,j,s,k,l}^{L} \}, \forall (k,l) \in L^{P}, (i,j) \in L, s \in S \\ %SFC带宽定义 
+	B^{s} \leq B^{S}, \forall s \in S \\ % s的带宽要满足最小的带宽要求
+	D^{s} = \sum_{(i,j) \in L,(k,l) \in L^{P}, s\in S} D^{s}_{i,j} \times A_{i,j,s,k,l}^{L} + \sum_{a \in s} I_{a}^{delay}  \\ %延迟定义
+	D^{s} \leq D^{S},\forall s \in S\\ % s的延迟要满足最小延迟要求	
+	p_{k,l,s} = \alpha B^{s}_{k,l} + \beta D^{s}_{k,l} , \forall (k,l) \in L^{P}, s\in S% p的定义 
+\end{align}
+%\textbf{网络功能域}{ }在云计算场景下，各种资源都聚合以资源池的方式对外提供，Clearwater的各功能节点也均以资源池的方式部署在云环境中。本文中以 $D$ 来表示某种具体的特定网络功能的资源池，也称为网络功能域。
+
+%\textbf{服务链}{ }本文中用 $S$ 代表一条被映射到具体网络上的网络功能服务链。$S$ 由一群有序的虚拟网络功能组成，例如：$S = \{f_{a} \to f_{b} \to f_{c}\}$。其中，$f$ 是从特定的网络功能域 $D$ 中选取的运行实例。网络流量根据服务链的连接顺序和连接拓扑，依次通过每一个功能节点。
+
+%\textbf{多层级映射}{ }如图 \ref{fig:mapping} 所示，除了从SFC描述的抽象逻辑服务链到实际运行的网络功能域中运行实例的映射关系之外，还存在着潜在的从服务链到物理资源的映射关系。在本文中用集合 $N = \{1,...,n\}$ 来表示一台物理机上所有的处理器节点 (Socket,详情见第 \ref{sec:numa} 章)，集合 $M = \{1,...,m\}$ 表示一台物理机上所有的物理核，根据物理核所处的物理节点 (Socket)，可以将 $M$ 进一步的划分为 $\{M_{n}| n \in N\}$。当服务链与运行实例一一绑定后，服务链与底层物理资源的映射也随之建立。由于虚拟化软件栈的存在，上层的服务链对于所绑定的底层硬件信息并不知晓。但是底层资源之间的亲和度关系对于整条服务链的性能有着相当重要的影响。存在的性能差异如第 \ref{related:observe} 章中验证性实验所示，所以提升服务链的底层资源亲和度对提升服务链的整体性能具有重要意义。
+
+
+
+%因为NFV中主要的负载是数据流量，所以本文使用衡量网络流量的延迟和带宽参数来作为衡量NFV的网络性能的具体参数。在这里，令 $B_{i,i+1}, i \in D$来表示任意两个运行实例(虚拟机)的的网络通信带宽，令$L_{ij}(i,j \in D ,i \neq j)$ 来表示两者之间通过真实或者虚拟网络通信的网络通信延迟。按照本文的假设，所有的虚拟机仅配置单个物理核，那么显然当服务链的映射确定后，存在一个具体实例到物理核的映射对 $\{ f \to m | f \in D, m \in M\}$。对于服务链上每个虚拟机来说，数据流量将按照串行的顺序沿着数据路径依次通过每个虚拟网络功能节点。为了衡量整个服务链的带宽和延迟，需要分析任意两个相连的两个实例之间的带宽和延迟。对于带宽而言，根据串行系统的特性，本文选取整个数据链路上最小带宽作为整条链的带宽值如公式 \ref{equ:bandwidth} 所示。
+%\begin{equation}
+%\label{equ:bandwidth}
+%Bandwidth(S) = \min{(B_{i,i+1 } )}  
+%\end{equation}
+
+%对于延迟来说，本文定义了$L(i,j) = L_{i，j} + L_{i} + L_{j}$。其中，$L(i,j)$ 表示数据流量通过以$i$为起点，$j$为终点的服务链的整体延迟，而$L_{i,j}$定义如上文所示表示两个实例的网络传输延迟，$L_{i}$$L_{j}$则分别表示虚拟网络功能处理相关流量而产生的延迟。对于任意一个特定的虚拟网络功能，如果配置了相同的物理资源，则其处理相同网络流量所花费的时间是相同的，也就是说所产生的这部分的延迟是一个固定的值，如公式 \ref{equ:latency} 所示，则服务链上累计的数据流量处理延迟为与服务链业务相关的常数。但是$L_{ij}$这部分的延迟则由于不同物理资源的组合，存在着很大的变化空间。总的来说，服务链 $S$ 上的传输延迟 $L(i,j)$，主要取决于$L_{ij}$。
+%\begin{equation}
+%\Delta Latency(S) = \sum_{i=0,j=i+1}{L_{ij}} 
+%\end{equation}
+%\begin{equation}
+%\label{equ:latency}
+%\begin{aligned}
+%Latency(S) & = \sum_{i=0,j=i+1}{L(ij)} \\
+%& = \sum_{i=0,j=i+1}{L_{ij}}  + C \\
+%& = \Delta Latency(S) + C  		  \\ 
+%\end{aligned}
+%\end{equation}
+
+\section{基于分支定界解法}
+基于上文所提出的整数线性规划模型，本文提出了基于分支定界的解法来对具体问题给出相应的解。 
+
+\begin{algorithm} 
+	\caption{Overview of proposed approach}  
+	\label{alg:approach}  
+	\begin{algorithmic} [1]		
+		\State $s,s^{\prime} \leftarrow \emptyset$
+		\State $upperBound \leftarrow |I|$
+		\State $lowerBound \leftarrow 1$
+		\State $nf \leftarrow (upperBound + lowerBound)/2$
+		\While {$nf \geq lowerBound and nf \leq upperBound$}
+		\State $nf \leftarrow (upperBound + lowerBound)/2 $
+		\State Remove objective function
+		\State Add constraint: $\sum_{x\in R^{P}, s \in S, y\in D}A_{x,s,y}^{N} \leq nf$
+		\State Add constraint: $ A_{x,s,y}^{N} \times w_{x} \leq W, \forall x\in R^{P}, s \in S, y \in D $
+		\State $s \leftarrow solveAlteredModel()$
+		\If{$s is feasible$}
+		\State $s^{\prime} \leftarrow s$
+		\State $upperBound \leftarrow nf$
+		\Else	
+		\State $lowerBound \leftarrow nf$	
+		\EndIf
+		\EndWhile		 
+		\If{$s^{\prime} == \emptyset$}
+		\State return infeasible solution
+		\Else
+		\State return $s^{\prime}$
+		\EndIf
+	\end{algorithmic}  
+\end{algorithm} 
+
