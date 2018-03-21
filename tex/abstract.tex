@@ -2,24 +2,28 @@
 %%==================================================
 %% abstract.tex for SJTU Master Thesis
 %%==================================================
-
+%TODO 修改abstract
 \begin{abstract}
-网络功能虚拟化 (NFV) 利用虚拟化的基础设施展现了业界所期待的敏捷性和可扩展性，但是软件化网络服务的性能仍然是阻碍其大规模普及应用的瓶颈之一。与传统虚拟化应用不同，大多数网络功能虚拟服务是多个虚拟机 (VMs) 以服务链 (SFC) 的形式运行在标准的大容量服务器中。每台虚拟机中运行着专用的虚拟网络功能 (VNF)，现有的虚拟机监视器 (Hypervisor) 仍然将这些虚拟机当做单独的虚拟机实例来为分配资源和维护。当一条服务链被请求服务时，现有的虚拟化资源管理缺少对每个所需要的VNF(VM)之间逻辑连接的识别，单独地为每个虚拟机分配物理资源。这样的资源分配方式会由于多核物理机底层架构的原因导致组成的服务链的性能波动，如何提升大容量多核服务器的资源利用效率成为了一个挑战。
+网络功能虚拟化 (NFV) 利用虚拟化的基础设施展现了业界所期待的敏捷性和可扩展性，但是软件化网络服务的性能仍然是阻碍其大规模普及应用的瓶颈之一。与传统虚拟化应用不同，大多数网络功能虚拟服务是由多个虚拟机 (VMs) 以服务链 (SFC) 的形式运行在标准的大容量服务器中。每台虚拟机中运行着专用的虚拟网络功能 (VNF)，现有的虚拟机监视器 (Hypervisor) 仍然将这些虚拟机视作单独的虚拟机实例来为其分配资源和维护。当一条服务链被请求服务时，现有的虚拟化资源管理缺少对每个所需要的 VNF (VM) 之间逻辑连接的识别，独立地为服务链中每个实例映射物理资源。这样的资源映射方式会由于多核物理机底层架构的原因 (如NUMA) 导致组成的服务链的性能波动。在这样的背景下，如何有效地利用虚拟化的物理资源来提供基于服务链的网络功能服务成为了一个亟待解决的问题。
 
-为了解决这个问题，本研究提出了针对服务链的资源抽象模型和资源分配算法，结合真实的IP多媒体子系统Clearwater服务，实现了本文的优化框架原型。通过采样底层服务的性能信息作为模型和算法的输入，根据生成的映射策略对实际参与的服务网络功能实例进行组链，完成所需服务的组建。
+IP多媒体子系统 (IMS) 作为一项成熟的基于互联网协议提供多媒体服务的电信架构，广泛的应用于通信运营商的解决方案中。IMS服务也是由多个不同的功能组根据不同的业务需求组织成特定的服务链来提供的。同样的，IMS系统作为一类典型的NFV业务部署在虚拟化的环境中时也面临着缺乏从服务链角度来进行资源映射的问题。
 
-最后，在实验室的真实网络环境下对本设计与默认的资源分配方法进行对比和性能评估。数据分析表明，本设计可以减少平均40\%的服务延迟，并提升接近3倍的网络吞吐。通过这些实验数据可以证明，本文所提出的优化原型针在Clearwater服务背景下性能有了明显的提升。
+为了解决这个问题，本文提出了针对服务链的优化资源映射约束模型和算法，结合实际的IP多媒体子系统Clearwater服务，实现本文的优化目标。首先，针对Clearwater的业务进行服务链分析,总结出各项服务对应的服务链组成。随后，通过本文提出的信息采样模块获取底层服务器的性能信息作为模型和算法的输入。信息收集完成后，再由动态映射模块使用基于贪心的算法生成优化后的映射策略并根据生成的映射策略对实际参与的服务网络功能实例进行组链映射，提供所需的网络服务。
 
-\keywords{\large 网络功能虚拟化 \quad 服务链 \quad 多核服务器 \quad}
+最后，在实验室的真实网络环境下对本文所提出的设计与默认的资源映射方法进行对比和性能评估。数据分析表明，本设计可以减少Clearwater应用平均40\%的服务延迟，并在模拟服务链应用性能测试中提升了接近2倍的网络吞吐。通过这些实验数据可以看出，本文所提出的优化方法在Clearwater系统下可以有效地提升服务的性能。
+
+\keywords{\large 网络功能虚拟化 \quad IP多媒体子系统 \quad 网络功能服务链 \quad 资源映射}
 \end{abstract}
 
 \begin{englishabstract}
-Network Function Virtualization (NFV) shows agility and scalability in industry when deployed in cloud computing infrastructure, but the performance of softwarized network service still impedes its popularization. Most of the network service in cloud run as service function chain (SFC) in Standard High Volume Server, consisting of virtual machines (VMs) in tandem. Each VM runs a dedicated virtual network function (VNF) in SFC. The hyper-visor treats these VM with running VNF as single instance to maintain. When a certain SFC is called for serving, the resource manager lacks the recognition of details on the connections between running VFs and separately allocate the resource which consequently lead to low efficient resource utilization for SHVS. This kind of resource allocation will result in performance fluctuation in SFC. How to optimize the SHVS resource utilization for chain-style NFV application poses a great challenge for us.
+Network Function Virtualization (NFV) shows agility and scalability in industry when deployed in cloud computing infrastructure, but the performance of softwarized network service still impedes its popularization. Most of the network service in cloud run as service function chain (SFC) in Standard High Volume Server, consisting of virtual machines (VMs) in tandem. Each VM runs a dedicated virtual network function (VNF) in SFC. The hyper-visor treats these VM with running VNF as single instance to maintain. When a certain SFC is called for serving, the resource manager lacks the recognition of details on the connections between running VFs and separately allocate the resource which consequently lead to low efficient resource utilization for SHVS. This kind of resource allocation will result in performance fluctuation in SFC. How to optimize the SHVS resource efficiently for chain-style NFV application poses a great challenge for us.
 
-To resolve this problem, in this paper, we propose a new resource abstraction considering the chain-style NFV workload with underlying characteristics and design a greedy algorithm based on our model to map resource. We implement our framework in real IP Multimedia Subsystem (IMS) platform. 
+IMS (IP Multimedia Subsystem) is an architectural framework for delivering IP multimedia services which has been broadly applied in communication solutions. Inspired by the idea of NFV, the service providers and open source communities have released a bunch of projects combined with the support of virtualization techniques and cloud computing. The IMS system comprises several function groups which are linked by specific orders to fulfill the service requirements. This form of organization serves as the service function chain. To deploy in the virtualized environment, the IMS system also meets the challenges of performance fluctuation and resource utilization.
 
-At last, the framework is tested and compared to existing generic methods. By the examination statistics, our framework can decrease 40\% average IMS service latency and improve the throughput within the SFC up to 300\%.
+To resolve this problem, in this paper, we propose a new resource constraint abstraction considering the chain-style NFV workload with underlying characteristics and design a greedy algorithm based on our model to map resource. We implement our framework in real IP Multimedia IMS platform called Clearwater. First, we analyze core services of Clearwater and conclude the service function chains of these services. Second, we use the Hardware Prober to detect the information of running environment, and take these information as the input of the model and algorithm. The Dynamic Coordinator leverages the information to generate mapping strategies and deploys the optimized mapping strategies in real platform.
 
-\englishkeywords{NFV, Service Function Chain, Multi-core Server}
+At last, the framework is tested and compared to existing generic methods. By the examination statistics, our framework can decrease 40\% average IMS service latency and improve the throughput within the simulative SFCs up to 200\%.
+
+\englishkeywords{NFV, IMS, Clearwater,Service Function Chain, Multi-core Server}
 \end{englishabstract}
 
